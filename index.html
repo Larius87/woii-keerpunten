@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOII Keerpunten</title>
+  <style>
+    :root {
+      --primary: #3a506b;
+      --secondary: #1c2541;
+      --accent: #5bc0be;
+      --light: #edf2f4;
+      --dark: #0b132b;
+      --success: #57a773;
+      --error: #ef476f;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+    
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    nav {
+      background-color: var(--secondary);
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    nav button {
+      background-color: transparent;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    
+    nav button:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    
+    nav button.active {
+      background-color: var(--accent);
+      color: var(--dark);
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    section {
+      display: none;
+      margin: 1rem 0;
+    }
+    
+    section.active {
+      display: block;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    
+    h3 {
+      color: var(--secondary);
+      margin: 1rem 0 0.5rem;
+    }
+    
+    p {
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .timeline {
+      position: relative;
+      margin: 2rem 0;
+      padding-left: 2rem;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 4px;
+      background-color: var(--primary);
+      border-radius: 2px;
+    }
+    
+    .event {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 1.5rem;
+    }
+    
+    .event::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -2rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      border: 3px solid var(--primary);
+    }
+    
+    .event .date {
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .quiz-container {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .quiz-question {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .quiz-question:last-child {
+      border-bottom: none;
+    }
+    
+    .quiz-question p {
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    
+    .quiz-options {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .quiz-options button {
+      padding: 0.5rem 1rem;
+      background-color: var(--light);
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .quiz-options button:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .quiz-options button.selected {
+      background-color: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .feedback {
+      padding: 0.75rem;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .feedback.correct {
+      background-color: rgba(87, 167, 115, 0.2);
+      color: var(--success);
+      border: 1px solid var(--success);
+      display: block;
+    }
+    
+    .feedback.incorrect {
+      background-color: rgba(239, 71, 111, 0.2);
+      color: var(--error);
+      border: 1px solid var(--error);
+      display: block;
+    }
+    
+    .map-container {
+      position: relative;
+      height: 500px;
+      background-color: #e5e5e5;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .map {
+      width: 100%;
+      height: 100%;
+      background-image: url('https://via.placeholder.com/1000x500');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    
+    .map-point {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: var(--accent);
+      border: 2px solid white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .map-point:hover, .map-point.active {
+      width: 26px;
+      height: 26px;
+      background-color: var(--primary);
+    }
+    
+    .map-point-info {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background-color: rgba(255,255,255,0.9);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 10;
+    }
+    
+    .map-point-info.active {
+      display: block;
+    }
+    
+    .progress-container {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    
+    .progress-card {
+      flex: 1;
+      min-width: 200px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .progress-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+      position: relative;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    
+    .progress-circle::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) 0%, #f0f0f0 0%);
+    }
+    
+    .progress-module-1::before {
+      background: conic-gradient(var(--accent) 75%, #f0f0f0 0%);
+    }
+    
+    .progress-module-2::before {
+      background: conic-gradient(var(--accent) 40%, #f0f0f0 0%);
+    }
+    
+    .progress-module-3::before {
+      background: conic-gradient(var(--accent) 20%, #f0f0f0 0%);
+    }
+    
+    .progress-circle span {
+      position: relative;
+      z-index: 1;
+      background-color: white;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+      justify-content: center;
+    }
+    
+    .badge {
+      width: 100px;
+      text-align: center;
+    }
+    
+    .badge-icon {
+      width: 64px;
+      height: 64px;
+      background-color: #f0f0f0;
+      border-radius: 50%;
+      margin: 0 auto 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 1.5rem;
+    }
+    
+    .badge.unlocked .badge-icon {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .badge-name {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .badge.unlocked .badge-name {
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .stat-item {
+      background-color: var(--light);
+      border-radius: 4px;
+      padding: 1rem;
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--secondary);
+    }
+    
+    .btn-action {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      margin: 1rem 0;
+    }
+    
+    .btn-action:hover {
+      background-color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+      .quiz-options {
+        flex-direction: column;
+      }
+      
+      .progress-card {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Keerpunten WOII</h1>
+    <p>Ontdek de belangrijkste momenten die het verloop van de Tweede Wereldoorlog bepaalden</p>
+  </header>
+  
+  <nav>
+    <button id="btn-home" class="nav-btn active" data-section="home">Home</button>
+    <button id="btn-tijdlijn" class="nav-btn" data-section="tijdlijn">Tijdlijn</button>
+    <button id="btn-mythes" class="nav-btn" data-section="mythes">Mythes vs. Feiten</button>
+    <button id="btn-kaart" class="nav-btn" data-section="kaart">Interactieve Kaart</button>
+    <button id="btn-voortgang" class="nav-btn" data-section="voortgang">Mijn Voortgang</button>
+  </nav>
+  
+  <main>
+    <!-- Home Section -->
+    <section id="home" class="active">
+      <div class="card">
+        <h2>Welkom bij de WOII Keerpunten App</h2>
+        <p>Deze interactieve app helpt je de belangrijkste keerpunten van de Tweede Wereldoorlog te begrijpen. Ontdek welke gebeurtenissen werkelijk beslissend waren voor de afloop van de oorlog, en leer meer over veelvoorkomende mythes en misvattingen.</p>
+        <h3>Wat kun je doen in deze app?</h3>
+        <ul>
+          <li>Verken een interactieve tijdlijn van de belangrijkste gebeurtenissen</li>
+          <li>Test je kennis met de "Mythes vs. Feiten" quiz</li>
+          <li>Ontdek cruciale locaties op de interactieve kaart</li>
+          <li>Volg je voortgang en verdien badges</li>
+        </ul>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Belangrijke keerpunten</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">10</div>
+            <div class="stat-label">Quizvragen</div>
+          </div>
+        </div>
+        
+        <button class="btn-action" onclick="startGame()">Start de App</button>
+      </div>
+    </section>
+    
+    <!-- Tijdlijn Section -->
+    <section id="tijdlijn">
+      <div class="card">
+        <h2>Tijdlijn</h2>
+        <div class="timeline">
+          <div class="event">
+            <span class="date">1939</span>
+            <p>Het uitbreken van de oorlog</p>
+          </div>
+          <div class="event">
+            <span class="date">1941</span>
+            <p>De aanval op Pearl Harbor</p>
+          </div>
+          <div class="event">
+            <span class="date">1944</span>
+            <p>D-Day: de landing in Normandië</p>
+          </div>
+          <div class="event">
+            <span class="date">1945</span>
+            <p>Overgave van Duitsland</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Mythes vs. Feiten Section -->
+    <section id="mythes">
+      <div class="card quiz-container">
+        <h2>Mythes vs. Feiten Quiz</h2>
+        <div class="quiz-question" data-question="1">
+          <p>Vraag 1: Was de landing op Normandië een verrassing voor de Duitsers?</p>
+          <div class="quiz-options">
+            <button onclick="selectAnswer(this, true)">Ja</button>
+            <button onclick="selectAnswer(this, false)">Nee</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <!-- Meer vragen kunnen hier worden toegevoegd -->
+      </div>
+    </section>
+    
+    <!-- Interactieve Kaart Section -->
+    <section id="kaart">
+      <div class="card">
+        <h2>Interactieve Kaart</h2>
+        <div class="map-container">
+          <div class="map" id="map">
+            <div class="map-point" style="top: 50%; left: 50%;" onclick="showMapInfo(this)"></div>
+            <!-- Voeg meer punten toe indien nodig -->
+          </div>
+          <div class="map-point-info" id="map-info">
+            <p>Locatie details komen hier...</p>
+            <button onclick="closeMapInfo()">Sluiten</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Mijn Voortgang Section -->
+    <section id="voortgang">
+      <div class="card">
+        <h2>Mijn Voortgang</h2>
+        <div class="progress-container">
+          <div class="progress-card">
+            <div class="progress-circle progress-module-1">
+              <span>75%</span>
+            </div>
+            <p>Module 1</p>
+          </div>
+          <div class="progress-card">
+            <div class="progress-circle progress-module-2">
+              <span>40%</span>
+            </div>
+            <p>Module 2</p>
+          </div>
+          <div class="progress-card">
+            <div class="progress-circle progress-module-3">
+              <span>20%</span>
+            </div>
+            <p>Module 3</p>
+          </div>
+        </div>
+        <div class="badge-container">
+          <div class="badge">
+            <div class="badge-icon">🏆</div>
+            <div class="badge-name">Badge 1</div>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">🎖</div>
+            <div class="badge-name">Badge 2</div>
+          </div>
+          <!-- Voeg meer badges toe indien nodig -->
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <script>
+    // Navigatie-functionaliteit: wissel tussen secties
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('main > section');
+    
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        sections.forEach(sec => sec.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.getAttribute('data-section')).classList.add('active');
+      });
+    });
+    
+    // Start de app (placeholder)
+    function startGame() {
+      alert('De app is gestart! Verken de verschillende secties.');
+    }
+    
+    // Quiz-functionaliteit
+    function selectAnswer(button, isCorrect) {
+      const quizQuestion = button.closest('.quiz-question');
+      const feedback = quizQuestion.querySelector('.feedback');
+      quizQuestion.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+      
+      if (isCorrect) {
+        feedback.textContent = 'Correct!';
+        feedback.className = 'feedback correct';
+      } else {
+        feedback.textContent = 'Incorrect. Probeer het opnieuw.';
+        feedback.className = 'feedback incorrect';
+      }
+    }
+    
+    // Kaart-functionaliteit
+    function showMapInfo(point) {
+      document.getElementById('map-info').classList.add('active');
+      // Hier kunt u extra logica toevoegen afhankelijk van de aangeklikte locatie.
+    }
+    
+    function closeMapInfo() {
+      document.getElementById('map-info').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
