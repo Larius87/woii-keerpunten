@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOII Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .question {
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+    .options button {
+      display: block;
+      margin: 5px 0;
+      padding: 8px 12px;
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .options button:hover {
+      background-color: #e6e6e6;
+    }
+    #result {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      text-align: center;
+    }
+    #restart {
+      display: none;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #3a506b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>WOII Quiz Game</h1>
+  <div id="game"></div>
+  <div id="result"></div>
+  <button id="restart" onclick="startGame()">Opnieuw spelen</button>
+
+  <script>
+    const questions = [
+      {
+        question: 'Wanneer begon de Tweede Wereldoorlog?',
+        options: ['1939', '1940', '1941', '1945'],
+        answer: 0
+      },
+      {
+        question: 'Welke slag wordt gezien als keerpunt aan het Oostfront?',
+        options: ['Slag om de Bulge', 'Slag bij Stalingrad', 'Slag om Berlijn', 'Slag om Midway'],
+        answer: 1
+      },
+      {
+        question: 'Op welke datum vond D-Day plaats?',
+        options: ['6 juni 1944', '4 juli 1943', '1 september 1942', '8 mei 1945'],
+        answer: 0
+      },
+      {
+        question: 'Welke stad werd in augustus 1945 als eerste getroffen door een atoombom?',
+        options: ['Hiroshima', 'Nagasaki', 'Tokyo', 'Osaka'],
+        answer: 0
+      },
+      {
+        question: 'Wie was de Britse premier tijdens het grootste deel van de oorlog?',
+        options: ['Winston Churchill', 'Neville Chamberlain', 'Clement Attlee', 'Dwight D. Eisenhower'],
+        answer: 0
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    const gameDiv = document.getElementById('game');
+    const resultDiv = document.getElementById('result');
+    const restartBtn = document.getElementById('restart');
+
+    function startGame() {
+      current = 0;
+      score = 0;
+      resultDiv.textContent = '';
+      restartBtn.style.display = 'none';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[current];
+      let html = `<div class="question">${q.question}</div><div class="options">`;
+      q.options.forEach((opt, idx) => {
+        html += `<button onclick="answer(${idx})">${opt}</button>`;
+      });
+      html += '</div>';
+      gameDiv.innerHTML = html;
+    }
+
+    function answer(idx) {
+      if (idx === questions[current].answer) {
+        score++;
+      }
+      current++;
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      gameDiv.innerHTML = '';
+      resultDiv.textContent = `Je score: ${score} van ${questions.length}`;
+      restartBtn.style.display = 'block';
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
